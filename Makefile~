@@ -1,0 +1,14 @@
+
+CC = gcc
+
+all: main.c serialtester.c Lab3IO.c datagen.c
+	$(CC) -g -Wall serialtester.c -o serialtester -lpthread -lm
+	$(CC) -g -Wall Lab3IO.c -o Lab3IO -lpthread -lm
+	$(CC) -g -Wall datagen.c -o datagen -lpthread -lm
+	$(CC) -g -Wall main.c -o main -lpthread -lm
+
+clean:
+	-rm main
+	-rm serialtester
+	-rm Lab3IO
+	-rm datagen
