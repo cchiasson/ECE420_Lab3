@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/attempt1.dir/datagen.c.o CMakeFiles/attempt1.dir/Lab3IO.c.o CMakeFiles/attempt1.dir/main.c.o CMakeFiles/attempt1.dir/serialtester.c.o  -o attempt1 
