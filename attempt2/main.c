@@ -21,6 +21,9 @@ int main(int argc, char* argv[]) {
     double temp;
     int *row;
 
+    omp_set_dynamic(1);
+    omp_set_num_threads(thread_count);
+
 
     Lab3LoadInput(&G, &n);
     b = CreateVec(n);
@@ -52,14 +55,15 @@ int main(int argc, char* argv[]) {
 //# pragma omp section
 //printf("%d\n", thread_count);
                 for (k = 0; k < n - 1; ++k) {
+                    /*Pivoting*/
                     temp = 0;
                     j = 0;
 //                    omp_set_num_threads(thread_count);
-//# pragma omp for schedule(static)
+# pragma omp for schedule(static)
 
 //                    # pragma omp section
                         for (i = k; i < n; ++i) {
-                            // if the value is smaller, change temp to that value.
+                            // if the valu//            printf("6 \n");e is smaller, change temp to that value.
 //# pragma omp ordered
 
                             if (temp < U[row[i]][k] * U[row[i]][k]) {
@@ -76,6 +80,8 @@ int main(int argc, char* argv[]) {
                             i = row[j];
                             row[j] = row[k];
                             row[k] = i;
+
+                            
                             /* row replacement*/
                         }
                         /*calculating*/
@@ -83,7 +89,7 @@ int main(int argc, char* argv[]) {
 //                    # pragma omp section
 //# pragma omp barrier
 //# pragma omp for schedule(dynamic,(n/thread_count)) nowait
-                # pragma omp parallel for num_threads(thread_count) default(none) shared(U, row, k, n) private(i, j, temp)
+                # pragma omp parallel for schedule(static, 1) shared(U, row, k, n) private(i, j, temp)
                         for (i = k + 1; i < n; ++i) {
                             temp = U[row[i]][k] / U[row[k]][k];
 //                    # pragma omp for
@@ -107,7 +113,8 @@ int main(int argc, char* argv[]) {
 //            omp_set_num_threads(1);
         for (k = n - 1; k > 0; --k) {
 //            omp_set_num_threads(thread_count);
-//# pragma omp for
+# pragma omp for schedule(static, 1)
+//            # pragma omp parallel for num_threads(thread_count) shared(U, row, k, n) private(i, temp)
             for (i = k - 1; i >= 0; --i) {
                         temp = U[row[i]][k] / U[row[k]][k];
 //                    # pragma omp critical
@@ -117,9 +124,8 @@ int main(int argc, char* argv[]) {
                     }
                 }
 //# pragma omp section
-//#pragma omp for
+#pragma omp for schedule(guided)
                 for (k = 0; k < n; ++k) {
-//            printf("6 \n");
                     x[k] = U[row[k]][n] / U[row[k]][k];
                 }
 //            }
